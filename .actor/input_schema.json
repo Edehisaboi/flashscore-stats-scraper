@@ -19,6 +19,8 @@
         "required": ["competition", "year"],
         "properties": {
           "competition": {
+            "title": "Competition",
+            "description": "Competition key to scrape.",
             "type": "string",
             "enum": [
               "premier_league",
@@ -46,6 +48,8 @@
             ]
           },
           "year": {
+            "title": "Year",
+            "description": "Season start year for season competitions, or edition year for calendar competitions.",
             "type": "integer",
             "minimum": 1900,
             "maximum": 2100
