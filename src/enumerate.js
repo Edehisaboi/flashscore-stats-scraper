@@ -157,6 +157,21 @@ async function extractMatches(page, context) {
       }
       return '';
     };
+    // Score cells embed the penalty-shootout result in a <sup class="wcl-penaltyScore">
+    // (e.g. "1(7)"). Strip it so we keep the regulation score only.
+    const scoreText = (root, selectors) => {
+      for (const selector of selectors) {
+        const element = root.querySelector(selector);
+        if (element) {
+          const clone = element.cloneNode(true);
+          clone.querySelectorAll('[class*="penaltyScore"], sup').forEach((node) => node.remove());
+          const text = clean(clone.textContent);
+          if (text) return text;
+        }
+      }
+      return '';
+    };
+    const hasPenaltyShootout = (root) => Boolean(root.querySelector('[class*="penaltyScore"]'));
     const allTexts = (root, selectors) => {
       const values = [];
       for (const selector of selectors) {
@@ -231,16 +246,16 @@ async function extractMatches(page, context) {
       const matchUrl = absoluteUrl(matchLink?.getAttribute('href') || '');
       const [homeIdFromUrl, awayIdFromUrl] = teamIdsFromMatchUrl(matchUrl);
       const homeTeam = firstText(row, [
+        '[class*="homeParticipant"] [class*="wcl-name"]',
         '[class*="homeParticipant"]',
         '.event__homeParticipant',
         '.event__participant--home',
-        '[data-testid*="home"]',
       ]);
       const awayTeam = firstText(row, [
+        '[class*="awayParticipant"] [class*="wcl-name"]',
         '[class*="awayParticipant"]',
         '.event__awayParticipant',
         '.event__participant--away',
-        '[data-testid*="away"]',
       ]);
       const homeParts = allTexts(row, [
         '.event__part--home',
@@ -250,11 +265,11 @@ async function extractMatches(page, context) {
         '.event__part--away',
         '[class*="part--away"]',
       ]);
-      const homeScoreRaw = firstText(row, [
+      const homeScoreRaw = scoreText(row, [
         '.event__score--home',
         '[class*="score--home"]',
       ]);
-      const awayScoreRaw = firstText(row, [
+      const awayScoreRaw = scoreText(row, [
         '.event__score--away',
         '[class*="score--away"]',
       ]);

@@ -95,8 +95,11 @@ export async function fetchStats(mid, options = {}) {
 }
 
 async function requestStatsUrl(url, options) {
+  // Apify proxy session ids must match /^[\w._~]+$/ (no hyphens), so keep the
+  // session token underscore-delimited and strip any other characters.
+  const sessionId = `stats_${String(options.mid).replace(/[^\w.~]/g, '')}`;
   const proxyUrl = options.proxyConfiguration?.newUrl
-    ? await options.proxyConfiguration.newUrl(`stats-${options.mid}`)
+    ? await options.proxyConfiguration.newUrl(sessionId)
     : undefined;
   const response = await gotScraping({
     url,
