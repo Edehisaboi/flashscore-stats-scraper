@@ -1,0 +1,13 @@
+{
+  "actorSpecification": 1,
+  "name": "flashscore-match-stats-scraper",
+  "title": "Flashscore Match Stats Scraper",
+  "version": "0.1",
+  "buildTag": "latest",
+  "dockerfile": "./Dockerfile",
+  "input": "./input_schema.json",
+  "storages": {
+    "dataset": "./dataset_schema.json"
+  },
+  "readme": "./README.md"
+}

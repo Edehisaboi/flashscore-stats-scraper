@@ -1,0 +1,151 @@
+{
+  "title": "Flashscore Match Stats Scraper",
+  "type": "object",
+  "schemaVersion": 1,
+  "properties": {
+    "jobs": {
+      "title": "Jobs",
+      "type": "array",
+      "description": "Optional list of competition/year jobs. If provided, this takes precedence over the single competition and year fields. For season competitions, year is the start year, so 2024 means 2024/2025.",
+      "editor": "json",
+      "prefill": [
+        {
+          "competition": "premier_league",
+          "year": 2024
+        }
+      ],
+      "items": {
+        "type": "object",
+        "required": ["competition", "year"],
+        "properties": {
+          "competition": {
+            "type": "string",
+            "enum": [
+              "premier_league",
+              "fa_cup",
+              "efl_cup",
+              "community_shield",
+              "ligue_1",
+              "coupe_de_france",
+              "trophee_des_champions",
+              "bundesliga",
+              "dfb_pokal",
+              "franz_beckenbauer_supercup",
+              "serie_a",
+              "coppa_italia",
+              "supercoppa_italiana",
+              "la_liga",
+              "copa_del_rey",
+              "supercopa_de_espana",
+              "champions_league",
+              "europa_league",
+              "conference_league",
+              "uefa_super_cup",
+              "fifa_intercontinental_cup",
+              "fifa_club_world_cup"
+            ]
+          },
+          "year": {
+            "type": "integer",
+            "minimum": 1900,
+            "maximum": 2100
+          }
+        }
+      }
+    },
+    "competition": {
+      "title": "Competition",
+      "type": "string",
+      "description": "Convenience selector for a single run. Ignored when Jobs is provided.",
+      "editor": "select",
+      "default": "premier_league",
+      "enum": [
+        "premier_league",
+        "fa_cup",
+        "efl_cup",
+        "community_shield",
+        "ligue_1",
+        "coupe_de_france",
+        "trophee_des_champions",
+        "bundesliga",
+        "dfb_pokal",
+        "franz_beckenbauer_supercup",
+        "serie_a",
+        "coppa_italia",
+        "supercoppa_italiana",
+        "la_liga",
+        "copa_del_rey",
+        "supercopa_de_espana",
+        "champions_league",
+        "europa_league",
+        "conference_league",
+        "uefa_super_cup",
+        "fifa_intercontinental_cup",
+        "fifa_club_world_cup"
+      ],
+      "enumTitles": [
+        "Premier League",
+        "FA Cup",
+        "EFL Cup",
+        "Community Shield",
+        "Ligue 1",
+        "Coupe de France",
+        "Trophee des Champions",
+        "Bundesliga",
+        "DFB-Pokal",
+        "Franz Beckenbauer Supercup",
+        "Serie A",
+        "Coppa Italia",
+        "Supercoppa Italiana",
+        "La Liga",
+        "Copa del Rey",
+        "Supercopa de Espana",
+        "UEFA Champions League",
+        "UEFA Europa League",
+        "UEFA Conference League",
+        "UEFA Super Cup",
+        "FIFA Intercontinental Cup",
+        "FIFA Club World Cup"
+      ]
+    },
+    "year": {
+      "title": "Year",
+      "type": "integer",
+      "description": "For season competitions, use the start year: 2024 resolves to 2024/2025. For calendar competitions, use the edition year.",
+      "default": 2024,
+      "minimum": 1900,
+      "maximum": 2100
+    },
+    "proxyConfiguration": {
+      "title": "Proxy configuration",
+      "type": "object",
+      "description": "Datacenter proxy is used first. Individual feed requests escalate to residential proxy only after block detection.",
+      "editor": "proxy",
+      "default": {
+        "useApifyProxy": true,
+        "apifyProxyGroups": ["BUYPROXIES94952"]
+      }
+    },
+    "maxConcurrency": {
+      "title": "Max feed concurrency",
+      "type": "integer",
+      "description": "Maximum concurrent plain HTTP stats-feed requests.",
+      "default": 10,
+      "minimum": 1,
+      "maximum": 50
+    },
+    "includePeriods": {
+      "title": "Periods",
+      "type": "array",
+      "description": "Periods to include in the output. FT is regulation full time; extra time and penalties are excluded.",
+      "editor": "select",
+      "default": ["ft", "1h"],
+      "items": {
+        "type": "string",
+        "enum": ["ft", "1h"],
+        "enumTitles": ["Full time", "First half"]
+      },
+      "uniqueItems": true
+    }
+  }
+}

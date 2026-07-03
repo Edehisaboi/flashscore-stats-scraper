@@ -1,0 +1,24 @@
+{
+  "name": "flashscore-match-stats-scraper",
+  "version": "0.1.0",
+  "description": "Apify Actor for scraping Flashscore football match metadata and FT/1H team statistics.",
+  "type": "module",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "start": "node src/main.js",
+    "test": "node --test",
+    "schema": "node scripts/generateDatasetSchema.js",
+    "verify:catalog": "node scripts/verifyCatalog.js"
+  },
+  "dependencies": {
+    "apify": "^3.7.0",
+    "cheerio": "1.0.0-rc.12",
+    "crawlee": "^3.14.0",
+    "got-scraping": "^4.1.1",
+    "p-limit": "^6.2.0",
+    "playwright": "^1.53.0"
+  },
+  "devDependencies": {}
+}

@@ -1,0 +1,1528 @@
+{
+  "actorSpecification": 1,
+  "views": {
+    "overview": {
+      "title": "Overview",
+      "transformation": {
+        "fields": [
+          "competition",
+          "country",
+          "season",
+          "match_id",
+          "match_url",
+          "status",
+          "date_utc",
+          "kickoff",
+          "round",
+          "home_team",
+          "home_team_id",
+          "away_team",
+          "away_team_id",
+          "home_score_ft",
+          "away_score_ft",
+          "home_score_ht",
+          "away_score_ht",
+          "home_expected_goals_ft",
+          "away_expected_goals_ft",
+          "home_xg_on_target_ft",
+          "away_xg_on_target_ft",
+          "home_ball_possession_ft",
+          "away_ball_possession_ft",
+          "home_total_shots_ft",
+          "away_total_shots_ft",
+          "home_shots_on_target_ft",
+          "away_shots_on_target_ft",
+          "home_shots_off_target_ft",
+          "away_shots_off_target_ft",
+          "home_blocked_shots_ft",
+          "away_blocked_shots_ft",
+          "home_shots_inside_box_ft",
+          "away_shots_inside_box_ft",
+          "home_shots_outside_box_ft",
+          "away_shots_outside_box_ft",
+          "home_hit_the_woodwork_ft",
+          "away_hit_the_woodwork_ft",
+          "home_big_chances_ft",
+          "away_big_chances_ft",
+          "home_corner_kicks_ft",
+          "away_corner_kicks_ft",
+          "home_touches_in_opposition_box_ft",
+          "away_touches_in_opposition_box_ft",
+          "home_accurate_through_passes_ft",
+          "away_accurate_through_passes_ft",
+          "home_offsides_ft",
+          "away_offsides_ft",
+          "home_free_kicks_ft",
+          "away_free_kicks_ft",
+          "home_passes_pct_ft",
+          "away_passes_pct_ft",
+          "home_passes_completed_ft",
+          "away_passes_completed_ft",
+          "home_passes_attempted_ft",
+          "away_passes_attempted_ft",
+          "home_long_passes_pct_ft",
+          "away_long_passes_pct_ft",
+          "home_long_passes_completed_ft",
+          "away_long_passes_completed_ft",
+          "home_long_passes_attempted_ft",
+          "away_long_passes_attempted_ft",
+          "home_passes_in_final_third_pct_ft",
+          "away_passes_in_final_third_pct_ft",
+          "home_passes_in_final_third_completed_ft",
+          "away_passes_in_final_third_completed_ft",
+          "home_passes_in_final_third_attempted_ft",
+          "away_passes_in_final_third_attempted_ft",
+          "home_crosses_pct_ft",
+          "away_crosses_pct_ft",
+          "home_crosses_completed_ft",
+          "away_crosses_completed_ft",
+          "home_crosses_attempted_ft",
+          "away_crosses_attempted_ft",
+          "home_expected_assists_ft",
+          "away_expected_assists_ft",
+          "home_throw_ins_ft",
+          "away_throw_ins_ft",
+          "home_fouls_ft",
+          "away_fouls_ft",
+          "home_tackles_pct_ft",
+          "away_tackles_pct_ft",
+          "home_tackles_completed_ft",
+          "away_tackles_completed_ft",
+          "home_tackles_attempted_ft",
+          "away_tackles_attempted_ft",
+          "home_duels_won_ft",
+          "away_duels_won_ft",
+          "home_clearances_ft",
+          "away_clearances_ft",
+          "home_interceptions_ft",
+          "away_interceptions_ft",
+          "home_errors_leading_to_shot_ft",
+          "away_errors_leading_to_shot_ft",
+          "home_errors_leading_to_goal_ft",
+          "away_errors_leading_to_goal_ft",
+          "home_goalkeeper_saves_ft",
+          "away_goalkeeper_saves_ft",
+          "home_xgot_faced_ft",
+          "away_xgot_faced_ft",
+          "home_goals_prevented_ft",
+          "away_goals_prevented_ft",
+          "home_yellow_cards_ft",
+          "away_yellow_cards_ft",
+          "home_red_cards_ft",
+          "away_red_cards_ft",
+          "home_expected_goals_1h",
+          "away_expected_goals_1h",
+          "home_xg_on_target_1h",
+          "away_xg_on_target_1h",
+          "home_ball_possession_1h",
+          "away_ball_possession_1h",
+          "home_total_shots_1h",
+          "away_total_shots_1h",
+          "home_shots_on_target_1h",
+          "away_shots_on_target_1h",
+          "home_shots_off_target_1h",
+          "away_shots_off_target_1h",
+          "home_blocked_shots_1h",
+          "away_blocked_shots_1h",
+          "home_shots_inside_box_1h",
+          "away_shots_inside_box_1h",
+          "home_shots_outside_box_1h",
+          "away_shots_outside_box_1h",
+          "home_hit_the_woodwork_1h",
+          "away_hit_the_woodwork_1h",
+          "home_big_chances_1h",
+          "away_big_chances_1h",
+          "home_corner_kicks_1h",
+          "away_corner_kicks_1h",
+          "home_touches_in_opposition_box_1h",
+          "away_touches_in_opposition_box_1h",
+          "home_accurate_through_passes_1h",
+          "away_accurate_through_passes_1h",
+          "home_offsides_1h",
+          "away_offsides_1h",
+          "home_free_kicks_1h",
+          "away_free_kicks_1h",
+          "home_passes_pct_1h",
+          "away_passes_pct_1h",
+          "home_passes_completed_1h",
+          "away_passes_completed_1h",
+          "home_passes_attempted_1h",
+          "away_passes_attempted_1h",
+          "home_long_passes_pct_1h",
+          "away_long_passes_pct_1h",
+          "home_long_passes_completed_1h",
+          "away_long_passes_completed_1h",
+          "home_long_passes_attempted_1h",
+          "away_long_passes_attempted_1h",
+          "home_passes_in_final_third_pct_1h",
+          "away_passes_in_final_third_pct_1h",
+          "home_passes_in_final_third_completed_1h",
+          "away_passes_in_final_third_completed_1h",
+          "home_passes_in_final_third_attempted_1h",
+          "away_passes_in_final_third_attempted_1h",
+          "home_crosses_pct_1h",
+          "away_crosses_pct_1h",
+          "home_crosses_completed_1h",
+          "away_crosses_completed_1h",
+          "home_crosses_attempted_1h",
+          "away_crosses_attempted_1h",
+          "home_expected_assists_1h",
+          "away_expected_assists_1h",
+          "home_throw_ins_1h",
+          "away_throw_ins_1h",
+          "home_fouls_1h",
+          "away_fouls_1h",
+          "home_tackles_pct_1h",
+          "away_tackles_pct_1h",
+          "home_tackles_completed_1h",
+          "away_tackles_completed_1h",
+          "home_tackles_attempted_1h",
+          "away_tackles_attempted_1h",
+          "home_duels_won_1h",
+          "away_duels_won_1h",
+          "home_clearances_1h",
+          "away_clearances_1h",
+          "home_interceptions_1h",
+          "away_interceptions_1h",
+          "home_errors_leading_to_shot_1h",
+          "away_errors_leading_to_shot_1h",
+          "home_errors_leading_to_goal_1h",
+          "away_errors_leading_to_goal_1h",
+          "home_goalkeeper_saves_1h",
+          "away_goalkeeper_saves_1h",
+          "home_xgot_faced_1h",
+          "away_xgot_faced_1h",
+          "home_goals_prevented_1h",
+          "away_goals_prevented_1h",
+          "home_yellow_cards_1h",
+          "away_yellow_cards_1h",
+          "home_red_cards_1h",
+          "away_red_cards_1h"
+        ]
+      },
+      "display": {
+        "component": "table",
+        "properties": {
+          "match_url": {
+            "label": "Match URL",
+            "format": "link"
+          }
+        }
+      }
+    }
+  },
+  "fields": {
+    "competition": {
+      "type": "string",
+      "title": "Competition"
+    },
+    "country": {
+      "type": "string",
+      "title": "Country"
+    },
+    "season": {
+      "type": "string",
+      "title": "Season"
+    },
+    "match_id": {
+      "type": "string",
+      "title": "Match Id"
+    },
+    "match_url": {
+      "type": "string",
+      "title": "Match Url"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status"
+    },
+    "date_utc": {
+      "type": "string",
+      "title": "Date Utc"
+    },
+    "kickoff": {
+      "type": "string",
+      "title": "Kickoff"
+    },
+    "round": {
+      "type": "string",
+      "title": "Round"
+    },
+    "home_team": {
+      "type": "string",
+      "title": "Home Team"
+    },
+    "home_team_id": {
+      "type": "string",
+      "title": "Home Team Id"
+    },
+    "away_team": {
+      "type": "string",
+      "title": "Away Team"
+    },
+    "away_team_id": {
+      "type": "string",
+      "title": "Away Team Id"
+    },
+    "home_score_ft": {
+      "type": [
+        "integer",
+        "string"
+      ],
+      "title": "Home Score Ft"
+    },
+    "away_score_ft": {
+      "type": [
+        "integer",
+        "string"
+      ],
+      "title": "Away Score Ft"
+    },
+    "home_score_ht": {
+      "type": [
+        "integer",
+        "string"
+      ],
+      "title": "Home Score Ht"
+    },
+    "away_score_ht": {
+      "type": [
+        "integer",
+        "string"
+      ],
+      "title": "Away Score Ht"
+    },
+    "home_expected_goals_ft": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Home Expected Goals Ft"
+    },
+    "away_expected_goals_ft": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Away Expected Goals Ft"
+    },
+    "home_xg_on_target_ft": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Home Xg On Target Ft"
+    },
+    "away_xg_on_target_ft": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Away Xg On Target Ft"
+    },
+    "home_ball_possession_ft": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Home Ball Possession Ft"
+    },
+    "away_ball_possession_ft": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Away Ball Possession Ft"
+    },
+    "home_total_shots_ft": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Home Total Shots Ft"
+    },
+    "away_total_shots_ft": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Away Total Shots Ft"
+    },
+    "home_shots_on_target_ft": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Home Shots On Target Ft"
+    },
+    "away_shots_on_target_ft": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Away Shots On Target Ft"
+    },
+    "home_shots_off_target_ft": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Home Shots Off Target Ft"
+    },
+    "away_shots_off_target_ft": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Away Shots Off Target Ft"
+    },
+    "home_blocked_shots_ft": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Home Blocked Shots Ft"
+    },
+    "away_blocked_shots_ft": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Away Blocked Shots Ft"
+    },
+    "home_shots_inside_box_ft": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Home Shots Inside Box Ft"
+    },
+    "away_shots_inside_box_ft": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Away Shots Inside Box Ft"
+    },
+    "home_shots_outside_box_ft": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Home Shots Outside Box Ft"
+    },
+    "away_shots_outside_box_ft": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Away Shots Outside Box Ft"
+    },
+    "home_hit_the_woodwork_ft": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Home Hit The Woodwork Ft"
+    },
+    "away_hit_the_woodwork_ft": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Away Hit The Woodwork Ft"
+    },
+    "home_big_chances_ft": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Home Big Chances Ft"
+    },
+    "away_big_chances_ft": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Away Big Chances Ft"
+    },
+    "home_corner_kicks_ft": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Home Corner Kicks Ft"
+    },
+    "away_corner_kicks_ft": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Away Corner Kicks Ft"
+    },
+    "home_touches_in_opposition_box_ft": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Home Touches In Opposition Box Ft"
+    },
+    "away_touches_in_opposition_box_ft": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Away Touches In Opposition Box Ft"
+    },
+    "home_accurate_through_passes_ft": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Home Accurate Through Passes Ft"
+    },
+    "away_accurate_through_passes_ft": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Away Accurate Through Passes Ft"
+    },
+    "home_offsides_ft": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Home Offsides Ft"
+    },
+    "away_offsides_ft": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Away Offsides Ft"
+    },
+    "home_free_kicks_ft": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Home Free Kicks Ft"
+    },
+    "away_free_kicks_ft": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Away Free Kicks Ft"
+    },
+    "home_passes_pct_ft": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Home Passes Pct Ft"
+    },
+    "away_passes_pct_ft": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Away Passes Pct Ft"
+    },
+    "home_passes_completed_ft": {
+      "type": [
+        "integer",
+        "string"
+      ],
+      "title": "Home Passes Completed Ft"
+    },
+    "away_passes_completed_ft": {
+      "type": [
+        "integer",
+        "string"
+      ],
+      "title": "Away Passes Completed Ft"
+    },
+    "home_passes_attempted_ft": {
+      "type": [
+        "integer",
+        "string"
+      ],
+      "title": "Home Passes Attempted Ft"
+    },
+    "away_passes_attempted_ft": {
+      "type": [
+        "integer",
+        "string"
+      ],
+      "title": "Away Passes Attempted Ft"
+    },
+    "home_long_passes_pct_ft": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Home Long Passes Pct Ft"
+    },
+    "away_long_passes_pct_ft": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Away Long Passes Pct Ft"
+    },
+    "home_long_passes_completed_ft": {
+      "type": [
+        "integer",
+        "string"
+      ],
+      "title": "Home Long Passes Completed Ft"
+    },
+    "away_long_passes_completed_ft": {
+      "type": [
+        "integer",
+        "string"
+      ],
+      "title": "Away Long Passes Completed Ft"
+    },
+    "home_long_passes_attempted_ft": {
+      "type": [
+        "integer",
+        "string"
+      ],
+      "title": "Home Long Passes Attempted Ft"
+    },
+    "away_long_passes_attempted_ft": {
+      "type": [
+        "integer",
+        "string"
+      ],
+      "title": "Away Long Passes Attempted Ft"
+    },
+    "home_passes_in_final_third_pct_ft": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Home Passes In Final Third Pct Ft"
+    },
+    "away_passes_in_final_third_pct_ft": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Away Passes In Final Third Pct Ft"
+    },
+    "home_passes_in_final_third_completed_ft": {
+      "type": [
+        "integer",
+        "string"
+      ],
+      "title": "Home Passes In Final Third Completed Ft"
+    },
+    "away_passes_in_final_third_completed_ft": {
+      "type": [
+        "integer",
+        "string"
+      ],
+      "title": "Away Passes In Final Third Completed Ft"
+    },
+    "home_passes_in_final_third_attempted_ft": {
+      "type": [
+        "integer",
+        "string"
+      ],
+      "title": "Home Passes In Final Third Attempted Ft"
+    },
+    "away_passes_in_final_third_attempted_ft": {
+      "type": [
+        "integer",
+        "string"
+      ],
+      "title": "Away Passes In Final Third Attempted Ft"
+    },
+    "home_crosses_pct_ft": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Home Crosses Pct Ft"
+    },
+    "away_crosses_pct_ft": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Away Crosses Pct Ft"
+    },
+    "home_crosses_completed_ft": {
+      "type": [
+        "integer",
+        "string"
+      ],
+      "title": "Home Crosses Completed Ft"
+    },
+    "away_crosses_completed_ft": {
+      "type": [
+        "integer",
+        "string"
+      ],
+      "title": "Away Crosses Completed Ft"
+    },
+    "home_crosses_attempted_ft": {
+      "type": [
+        "integer",
+        "string"
+      ],
+      "title": "Home Crosses Attempted Ft"
+    },
+    "away_crosses_attempted_ft": {
+      "type": [
+        "integer",
+        "string"
+      ],
+      "title": "Away Crosses Attempted Ft"
+    },
+    "home_expected_assists_ft": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Home Expected Assists Ft"
+    },
+    "away_expected_assists_ft": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Away Expected Assists Ft"
+    },
+    "home_throw_ins_ft": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Home Throw Ins Ft"
+    },
+    "away_throw_ins_ft": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Away Throw Ins Ft"
+    },
+    "home_fouls_ft": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Home Fouls Ft"
+    },
+    "away_fouls_ft": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Away Fouls Ft"
+    },
+    "home_tackles_pct_ft": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Home Tackles Pct Ft"
+    },
+    "away_tackles_pct_ft": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Away Tackles Pct Ft"
+    },
+    "home_tackles_completed_ft": {
+      "type": [
+        "integer",
+        "string"
+      ],
+      "title": "Home Tackles Completed Ft"
+    },
+    "away_tackles_completed_ft": {
+      "type": [
+        "integer",
+        "string"
+      ],
+      "title": "Away Tackles Completed Ft"
+    },
+    "home_tackles_attempted_ft": {
+      "type": [
+        "integer",
+        "string"
+      ],
+      "title": "Home Tackles Attempted Ft"
+    },
+    "away_tackles_attempted_ft": {
+      "type": [
+        "integer",
+        "string"
+      ],
+      "title": "Away Tackles Attempted Ft"
+    },
+    "home_duels_won_ft": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Home Duels Won Ft"
+    },
+    "away_duels_won_ft": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Away Duels Won Ft"
+    },
+    "home_clearances_ft": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Home Clearances Ft"
+    },
+    "away_clearances_ft": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Away Clearances Ft"
+    },
+    "home_interceptions_ft": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Home Interceptions Ft"
+    },
+    "away_interceptions_ft": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Away Interceptions Ft"
+    },
+    "home_errors_leading_to_shot_ft": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Home Errors Leading To Shot Ft"
+    },
+    "away_errors_leading_to_shot_ft": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Away Errors Leading To Shot Ft"
+    },
+    "home_errors_leading_to_goal_ft": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Home Errors Leading To Goal Ft"
+    },
+    "away_errors_leading_to_goal_ft": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Away Errors Leading To Goal Ft"
+    },
+    "home_goalkeeper_saves_ft": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Home Goalkeeper Saves Ft"
+    },
+    "away_goalkeeper_saves_ft": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Away Goalkeeper Saves Ft"
+    },
+    "home_xgot_faced_ft": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Home Xgot Faced Ft"
+    },
+    "away_xgot_faced_ft": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Away Xgot Faced Ft"
+    },
+    "home_goals_prevented_ft": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Home Goals Prevented Ft"
+    },
+    "away_goals_prevented_ft": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Away Goals Prevented Ft"
+    },
+    "home_yellow_cards_ft": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Home Yellow Cards Ft"
+    },
+    "away_yellow_cards_ft": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Away Yellow Cards Ft"
+    },
+    "home_red_cards_ft": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Home Red Cards Ft"
+    },
+    "away_red_cards_ft": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Away Red Cards Ft"
+    },
+    "home_expected_goals_1h": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Home Expected Goals 1h"
+    },
+    "away_expected_goals_1h": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Away Expected Goals 1h"
+    },
+    "home_xg_on_target_1h": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Home Xg On Target 1h"
+    },
+    "away_xg_on_target_1h": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Away Xg On Target 1h"
+    },
+    "home_ball_possession_1h": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Home Ball Possession 1h"
+    },
+    "away_ball_possession_1h": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Away Ball Possession 1h"
+    },
+    "home_total_shots_1h": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Home Total Shots 1h"
+    },
+    "away_total_shots_1h": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Away Total Shots 1h"
+    },
+    "home_shots_on_target_1h": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Home Shots On Target 1h"
+    },
+    "away_shots_on_target_1h": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Away Shots On Target 1h"
+    },
+    "home_shots_off_target_1h": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Home Shots Off Target 1h"
+    },
+    "away_shots_off_target_1h": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Away Shots Off Target 1h"
+    },
+    "home_blocked_shots_1h": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Home Blocked Shots 1h"
+    },
+    "away_blocked_shots_1h": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Away Blocked Shots 1h"
+    },
+    "home_shots_inside_box_1h": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Home Shots Inside Box 1h"
+    },
+    "away_shots_inside_box_1h": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Away Shots Inside Box 1h"
+    },
+    "home_shots_outside_box_1h": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Home Shots Outside Box 1h"
+    },
+    "away_shots_outside_box_1h": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Away Shots Outside Box 1h"
+    },
+    "home_hit_the_woodwork_1h": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Home Hit The Woodwork 1h"
+    },
+    "away_hit_the_woodwork_1h": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Away Hit The Woodwork 1h"
+    },
+    "home_big_chances_1h": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Home Big Chances 1h"
+    },
+    "away_big_chances_1h": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Away Big Chances 1h"
+    },
+    "home_corner_kicks_1h": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Home Corner Kicks 1h"
+    },
+    "away_corner_kicks_1h": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Away Corner Kicks 1h"
+    },
+    "home_touches_in_opposition_box_1h": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Home Touches In Opposition Box 1h"
+    },
+    "away_touches_in_opposition_box_1h": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Away Touches In Opposition Box 1h"
+    },
+    "home_accurate_through_passes_1h": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Home Accurate Through Passes 1h"
+    },
+    "away_accurate_through_passes_1h": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Away Accurate Through Passes 1h"
+    },
+    "home_offsides_1h": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Home Offsides 1h"
+    },
+    "away_offsides_1h": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Away Offsides 1h"
+    },
+    "home_free_kicks_1h": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Home Free Kicks 1h"
+    },
+    "away_free_kicks_1h": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Away Free Kicks 1h"
+    },
+    "home_passes_pct_1h": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Home Passes Pct 1h"
+    },
+    "away_passes_pct_1h": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Away Passes Pct 1h"
+    },
+    "home_passes_completed_1h": {
+      "type": [
+        "integer",
+        "string"
+      ],
+      "title": "Home Passes Completed 1h"
+    },
+    "away_passes_completed_1h": {
+      "type": [
+        "integer",
+        "string"
+      ],
+      "title": "Away Passes Completed 1h"
+    },
+    "home_passes_attempted_1h": {
+      "type": [
+        "integer",
+        "string"
+      ],
+      "title": "Home Passes Attempted 1h"
+    },
+    "away_passes_attempted_1h": {
+      "type": [
+        "integer",
+        "string"
+      ],
+      "title": "Away Passes Attempted 1h"
+    },
+    "home_long_passes_pct_1h": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Home Long Passes Pct 1h"
+    },
+    "away_long_passes_pct_1h": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Away Long Passes Pct 1h"
+    },
+    "home_long_passes_completed_1h": {
+      "type": [
+        "integer",
+        "string"
+      ],
+      "title": "Home Long Passes Completed 1h"
+    },
+    "away_long_passes_completed_1h": {
+      "type": [
+        "integer",
+        "string"
+      ],
+      "title": "Away Long Passes Completed 1h"
+    },
+    "home_long_passes_attempted_1h": {
+      "type": [
+        "integer",
+        "string"
+      ],
+      "title": "Home Long Passes Attempted 1h"
+    },
+    "away_long_passes_attempted_1h": {
+      "type": [
+        "integer",
+        "string"
+      ],
+      "title": "Away Long Passes Attempted 1h"
+    },
+    "home_passes_in_final_third_pct_1h": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Home Passes In Final Third Pct 1h"
+    },
+    "away_passes_in_final_third_pct_1h": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Away Passes In Final Third Pct 1h"
+    },
+    "home_passes_in_final_third_completed_1h": {
+      "type": [
+        "integer",
+        "string"
+      ],
+      "title": "Home Passes In Final Third Completed 1h"
+    },
+    "away_passes_in_final_third_completed_1h": {
+      "type": [
+        "integer",
+        "string"
+      ],
+      "title": "Away Passes In Final Third Completed 1h"
+    },
+    "home_passes_in_final_third_attempted_1h": {
+      "type": [
+        "integer",
+        "string"
+      ],
+      "title": "Home Passes In Final Third Attempted 1h"
+    },
+    "away_passes_in_final_third_attempted_1h": {
+      "type": [
+        "integer",
+        "string"
+      ],
+      "title": "Away Passes In Final Third Attempted 1h"
+    },
+    "home_crosses_pct_1h": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Home Crosses Pct 1h"
+    },
+    "away_crosses_pct_1h": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Away Crosses Pct 1h"
+    },
+    "home_crosses_completed_1h": {
+      "type": [
+        "integer",
+        "string"
+      ],
+      "title": "Home Crosses Completed 1h"
+    },
+    "away_crosses_completed_1h": {
+      "type": [
+        "integer",
+        "string"
+      ],
+      "title": "Away Crosses Completed 1h"
+    },
+    "home_crosses_attempted_1h": {
+      "type": [
+        "integer",
+        "string"
+      ],
+      "title": "Home Crosses Attempted 1h"
+    },
+    "away_crosses_attempted_1h": {
+      "type": [
+        "integer",
+        "string"
+      ],
+      "title": "Away Crosses Attempted 1h"
+    },
+    "home_expected_assists_1h": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Home Expected Assists 1h"
+    },
+    "away_expected_assists_1h": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Away Expected Assists 1h"
+    },
+    "home_throw_ins_1h": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Home Throw Ins 1h"
+    },
+    "away_throw_ins_1h": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Away Throw Ins 1h"
+    },
+    "home_fouls_1h": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Home Fouls 1h"
+    },
+    "away_fouls_1h": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Away Fouls 1h"
+    },
+    "home_tackles_pct_1h": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Home Tackles Pct 1h"
+    },
+    "away_tackles_pct_1h": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Away Tackles Pct 1h"
+    },
+    "home_tackles_completed_1h": {
+      "type": [
+        "integer",
+        "string"
+      ],
+      "title": "Home Tackles Completed 1h"
+    },
+    "away_tackles_completed_1h": {
+      "type": [
+        "integer",
+        "string"
+      ],
+      "title": "Away Tackles Completed 1h"
+    },
+    "home_tackles_attempted_1h": {
+      "type": [
+        "integer",
+        "string"
+      ],
+      "title": "Home Tackles Attempted 1h"
+    },
+    "away_tackles_attempted_1h": {
+      "type": [
+        "integer",
+        "string"
+      ],
+      "title": "Away Tackles Attempted 1h"
+    },
+    "home_duels_won_1h": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Home Duels Won 1h"
+    },
+    "away_duels_won_1h": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Away Duels Won 1h"
+    },
+    "home_clearances_1h": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Home Clearances 1h"
+    },
+    "away_clearances_1h": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Away Clearances 1h"
+    },
+    "home_interceptions_1h": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Home Interceptions 1h"
+    },
+    "away_interceptions_1h": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Away Interceptions 1h"
+    },
+    "home_errors_leading_to_shot_1h": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Home Errors Leading To Shot 1h"
+    },
+    "away_errors_leading_to_shot_1h": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Away Errors Leading To Shot 1h"
+    },
+    "home_errors_leading_to_goal_1h": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Home Errors Leading To Goal 1h"
+    },
+    "away_errors_leading_to_goal_1h": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Away Errors Leading To Goal 1h"
+    },
+    "home_goalkeeper_saves_1h": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Home Goalkeeper Saves 1h"
+    },
+    "away_goalkeeper_saves_1h": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Away Goalkeeper Saves 1h"
+    },
+    "home_xgot_faced_1h": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Home Xgot Faced 1h"
+    },
+    "away_xgot_faced_1h": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Away Xgot Faced 1h"
+    },
+    "home_goals_prevented_1h": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Home Goals Prevented 1h"
+    },
+    "away_goals_prevented_1h": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Away Goals Prevented 1h"
+    },
+    "home_yellow_cards_1h": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Home Yellow Cards 1h"
+    },
+    "away_yellow_cards_1h": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Away Yellow Cards 1h"
+    },
+    "home_red_cards_1h": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Home Red Cards 1h"
+    },
+    "away_red_cards_1h": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "title": "Away Red Cards 1h"
+    }
+  }
+}
