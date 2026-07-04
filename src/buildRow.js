@@ -215,11 +215,12 @@ function findPeriodEntries(statsByPeriod, labels) {
 }
 
 function hasExtraTime(match, statsByPeriod) {
-  const status = cleanText(`${match?.status || ''} ${match?.scoreInfo || ''}`).toLowerCase();
+  // Only an actual extra-time stats period means the "Match" block includes ET
+  // and we must fall back to 1st+2nd half for regulation. A penalty shootout
+  // with no ET leaves the "Match" block at 90', so it is used directly.
   const periodNames = Object.keys(statsByPeriod || {}).join(' ').toLowerCase();
 
-  return /after extra|extra time|\baet\b|after penalties|penalties|pen\./i.test(status) ||
-    /extra time|\bextra\b/i.test(periodNames);
+  return /extra/.test(periodNames);
 }
 
 function normalizeIncludePeriods(includePeriods) {
