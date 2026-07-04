@@ -280,7 +280,10 @@ async function extractMatches(page, context) {
         '.event__stage--block',
         '.event__stage',
       ]);
+      // The stageTime wrapper appends a stage marker (e.g. "Pen"/"AET") after the
+      // date; read the inner date span so kickoff stays a clean "DD.MM.YYYY".
       const kickoff = firstText(row, [
+        '[class*="dateContent"]',
         '[class*="stageTime"]',
         '.event__stageTime',
         '.event__time',

@@ -7,11 +7,25 @@ export const FEED_HOSTS = Object.freeze(['global', '2', '46']);
 const MAX_RETRIES_PER_PROXY_TIER = 3;
 const BLOCK_BODY_RE = /captcha|cloudflare|access denied|forbidden|unusual traffic|verify you are human/i;
 
-export function buildStatsUrl(mid, host = FEED_HOSTS[0]) {
-  return `https://${host}.flashscore.ninja/2/x/feed/df_st_1_${mid}`;
+export function buildFeedUrl(feedName, mid, host = FEED_HOSTS[0]) {
+  return `https://${host}.flashscore.ninja/2/x/feed/${feedName}_${mid}`;
 }
 
-export async function fetchStats(mid, options = {}) {
+export function buildStatsUrl(mid, host = FEED_HOSTS[0]) {
+  return buildFeedUrl('df_st_1', mid, host);
+}
+
+// Detailed team statistics feed (FT / 1st half / 2nd half).
+export function fetchStats(mid, options = {}) {
+  return fetchFeed('df_st_1', mid, options);
+}
+
+// Match summary feed: half-by-half scores, penalties, referee, venue, attendance.
+export function fetchSummary(mid, options = {}) {
+  return fetchFeed('df_sur_1', mid, options);
+}
+
+async function fetchFeed(feedName, mid, options = {}) {
   const {
     proxyConfiguration,
     residentialProxyConfiguration,
@@ -32,7 +46,7 @@ export async function fetchStats(mid, options = {}) {
     for (const proxyTier of proxyTiers) {
       for (let attempt = 0; attempt < MAX_RETRIES_PER_PROXY_TIER; attempt += 1) {
         const host = FEED_HOSTS[attempt % FEED_HOSTS.length];
-        const url = buildStatsUrl(mid, host);
+        const url = buildFeedUrl(feedName, mid, host);
 
         try {
           const response = await requestStatsUrl(url, {

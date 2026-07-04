@@ -3,9 +3,10 @@ import pLimit from 'p-limit';
 import { buildRow, createRowPlan } from './buildRow.js';
 import { getCompetition } from './competitions.js';
 import { enumerateMatches } from './enumerate.js';
-import { fetchStats } from './feeds.js';
+import { fetchStats, fetchSummary } from './feeds.js';
 import { DEFAULT_PROXY_CONFIGURATION, normalizeProxyConfiguration, resolveJobs } from './input.js';
 import { parseStatsFeed } from './parseStats.js';
+import { parseSummaryFeed } from './parseSummary.js';
 import { resolveSeason } from './resolveSeason.js';
 import { logInfo, logWarning } from './util.js';
 
@@ -55,13 +56,19 @@ await Actor.main(async () => {
     await Actor.setStatusMessage(`Fetching stats for ${matches.length} ${competition.title} matches`);
     const jobRecords = await Promise.all(matches.map((match) => limit(async () => {
       try {
-        const response = await fetchStats(match.mid, {
+        const feedOptions = {
           proxyConfiguration,
           residentialProxyConfiguration,
           fallbackFsign: liveFsign,
           log,
-        });
+        };
+        const [response, summaryResponse] = await Promise.all([
+          fetchStats(match.mid, feedOptions),
+          // Summary feed provides HT score + regulation FT; failure is non-fatal.
+          fetchSummary(match.mid, feedOptions).catch(() => null),
+        ]);
         const statsByPeriod = response.noStats ? {} : parseStatsFeed(response.body);
+        mergeSummary(match, summaryResponse);
         scraped += 1;
 
         return {
@@ -136,3 +143,19 @@ await Actor.main(async () => {
   await Actor.setStatusMessage(`Finished: ${rows.length} rows`);
   logInfo(log, 'Run summary', output);
 });
+
+// Merge halftime score and regulation full-time score from the match summary
+// feed. Summary FT (1st half + 2nd half) is authoritative regulation and
+// overrides the listing score, which can show the after-extra-time result.
+function mergeSummary(match, summaryResponse) {
+  if (!summaryResponse || summaryResponse.noStats) {
+    return;
+  }
+
+  const summary = parseSummaryFeed(summaryResponse.body);
+
+  if (summary.homeScoreHt !== '') match.homeScoreHt = summary.homeScoreHt;
+  if (summary.awayScoreHt !== '') match.awayScoreHt = summary.awayScoreHt;
+  if (summary.homeScoreFt !== '') match.homeScoreFt = summary.homeScoreFt;
+  if (summary.awayScoreFt !== '') match.awayScoreFt = summary.awayScoreFt;
+}
