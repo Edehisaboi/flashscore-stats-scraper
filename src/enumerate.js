@@ -18,7 +18,7 @@ export async function enumerateMatches(options) {
   const crawler = new PlaywrightCrawler({
     proxyConfiguration,
     maxConcurrency: 1,
-    requestHandlerTimeoutSecs: 180,
+    requestHandlerTimeoutSecs: 300,
     navigationTimeoutSecs: 60,
     launchContext: {
       launchOptions: {
@@ -76,58 +76,70 @@ async function exhaustShowMore(page, maxClicks, log) {
   let staleClicks = 0;
 
   for (let clickCount = 0; clickCount < maxClicks; clickCount += 1) {
-    const button = await findShowMoreButton(page);
-
-    if (!button) {
-      return;
-    }
-
     const beforeCount = await countMatchRows(page);
+    const clicked = await clickShowMore(page);
 
-    try {
-      await button.scrollIntoViewIfNeeded({ timeout: 5000 });
-      await button.click({ timeout: 10000 });
-      await page.waitForLoadState('networkidle', { timeout: 10000 }).catch(() => {});
-      await page.waitForTimeout(750);
-    } catch (error) {
-      logWarning(log, 'Failed to click Show more matches button', { message: error.message });
+    if (!clicked) {
+      // No "Show more matches" button remains: every round is loaded.
       return;
     }
 
-    const afterCount = await countMatchRows(page);
+    const grew = await waitForRowIncrease(page, beforeCount, 12000);
 
-    if (afterCount <= beforeCount) {
+    if (grew) {
+      staleClicks = 0;
+    } else {
+      // A click that adds no rows can be a transient miss (overlay, slow feed),
+      // so retry a couple of times before giving up.
       staleClicks += 1;
-      if (staleClicks >= 2) {
+      if (staleClicks >= 3) {
+        logWarning(log, `Show more matches stopped growing at ${await countMatchRows(page)} rows`);
         return;
       }
-    } else {
-      staleClicks = 0;
     }
   }
 
   logWarning(log, `Stopped after ${maxClicks} Show more clicks; results page may still contain older matches`);
 }
 
-async function findShowMoreButton(page) {
-  const candidates = [
-    page.getByRole('button', { name: /show more/i }).first(),
-    page.locator('button:has-text("Show more")').first(),
-    page.locator('[class*="wcl-footer__button"]:has-text("Show more")').first(),
-    page.locator('[class*="event__more"]:has-text("Show more")').first(),
-  ];
+async function clickShowMore(page) {
+  // Match the button only (there is also a decoy "Show more matches" <a> that navigates).
+  const button = page.locator('button:has-text("Show more matches")').first();
 
-  for (const candidate of candidates) {
-    try {
-      if ((await candidate.count()) > 0 && await candidate.isVisible({ timeout: 1500 })) {
-        return candidate;
+  try {
+    if ((await button.count()) === 0) {
+      return false;
+    }
+
+    await button.scrollIntoViewIfNeeded({ timeout: 5000 }).catch(() => {});
+    // force:true bypasses ad/consent overlays that intercept the click in headless.
+    await button.click({ timeout: 8000, force: true });
+    return true;
+  } catch {
+    // Fallback: click the element directly in the page context.
+    return page.evaluate(() => {
+      const element = [...document.querySelectorAll('button')]
+        .find((candidate) => /show more matches/i.test(candidate.textContent || ''));
+      if (element) {
+        element.click();
+        return true;
       }
-    } catch {
-      // Try the next selector.
+      return false;
+    });
+  }
+}
+
+async function waitForRowIncrease(page, beforeCount, timeoutMs) {
+  const start = Date.now();
+
+  while (Date.now() - start < timeoutMs) {
+    await page.waitForTimeout(250);
+    if ((await countMatchRows(page)) > beforeCount) {
+      return true;
     }
   }
 
-  return null;
+  return false;
 }
 
 async function countMatchRows(page) {
