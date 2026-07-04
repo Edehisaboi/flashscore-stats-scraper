@@ -14,6 +14,9 @@ await Actor.main(async () => {
   const input = await Actor.getInput() || {};
   const jobs = resolveJobs(input);
   const includePeriods = input.includePeriods || ['ft', '1h'];
+  // Cup competitions include early qualifying rounds with no statistics; by
+  // default we drop stat-less matches so the output only contains useful rows.
+  const onlyWithStats = input.onlyWithStats !== false;
   const maxConcurrency = Number.isInteger(input.maxConcurrency) ? input.maxConcurrency : 10;
   const proxyInput = normalizeProxyConfiguration(input.proxyConfiguration || DEFAULT_PROXY_CONFIGURATION);
   const proxyConfiguration = await Actor.createProxyConfiguration(proxyInput);
@@ -49,27 +52,31 @@ await Actor.main(async () => {
     });
 
     const limit = pLimit(maxConcurrency);
-    let scraped = 0;
+    let withStats = 0;
     let failed = 0;
     const failures = [];
 
     await Actor.setStatusMessage(`Fetching stats for ${matches.length} ${competition.title} matches`);
     const jobRecords = await Promise.all(matches.map((match) => limit(async () => {
+      const feedOptions = {
+        proxyConfiguration,
+        residentialProxyConfiguration,
+        fallbackFsign: liveFsign,
+        log,
+      };
+
       try {
-        const feedOptions = {
-          proxyConfiguration,
-          residentialProxyConfiguration,
-          fallbackFsign: liveFsign,
-          log,
-        };
-        const [response, summaryResponse] = await Promise.all([
-          fetchStats(match.mid, feedOptions),
-          // Summary feed provides HT score + regulation FT; failure is non-fatal.
-          fetchSummary(match.mid, feedOptions).catch(() => null),
-        ]);
+        const response = await fetchStats(match.mid, feedOptions);
         const statsByPeriod = response.noStats ? {} : parseStatsFeed(response.body);
-        mergeSummary(match, summaryResponse);
-        scraped += 1;
+        const hasStats = Object.keys(statsByPeriod).length > 0;
+
+        if (hasStats) {
+          withStats += 1;
+          // Summary feed (HT + regulation FT) is only worth fetching for matches
+          // that actually have statistics; failure is non-fatal.
+          const summaryResponse = await fetchSummary(match.mid, feedOptions).catch(() => null);
+          mergeSummary(match, summaryResponse);
+        }
 
         return {
           competition,
@@ -77,22 +84,13 @@ await Actor.main(async () => {
           season: seasonResolution.season,
           match,
           statsByPeriod,
-          feed: {
-            host: response.host,
-            proxyTier: response.proxyTier,
-            noStats: response.noStats,
-          },
+          hasStats,
+          feed: { host: response.host, proxyTier: response.proxyTier, noStats: response.noStats },
         };
       } catch (error) {
         failed += 1;
-        failures.push({
-          mid: match.mid,
-          matchUrl: match.matchUrl,
-          message: error.message,
-        });
-        logWarning(log, `Stats fetch failed for ${match.mid}; emitting metadata-only row`, {
-          message: error.message,
-        });
+        failures.push({ mid: match.mid, matchUrl: match.matchUrl, message: error.message });
+        logWarning(log, `Stats fetch failed for ${match.mid}`, { message: error.message });
 
         return {
           competition,
@@ -100,10 +98,8 @@ await Actor.main(async () => {
           season: seasonResolution.season,
           match,
           statsByPeriod: {},
-          feed: {
-            noStats: true,
-            error: error.message,
-          },
+          hasStats: false,
+          feed: { noStats: true, error: error.message },
         };
       }
     })));
@@ -118,15 +114,17 @@ await Actor.main(async () => {
       startedAt,
       finishedAt: new Date().toISOString(),
       matchesFound: matches.length,
-      rowsPrepared: jobRecords.length,
-      statsFetched: scraped,
+      matchesWithStats: withStats,
+      matchesWithoutStats: matches.length - withStats - failed,
       statsFailed: failed,
+      onlyWithStats,
       failures,
     });
   }
 
-  const rowPlan = createRowPlan(records, includePeriods);
-  const rows = records.map((record) => buildRow(record, rowPlan));
+  const outputRecords = onlyWithStats ? records.filter((record) => record.hasStats) : records;
+  const rowPlan = createRowPlan(outputRecords, includePeriods);
+  const rows = outputRecords.map((record) => buildRow(record, rowPlan));
 
   if (rows.length) {
     await Actor.pushData(rows);

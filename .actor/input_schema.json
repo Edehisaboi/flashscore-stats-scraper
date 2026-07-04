@@ -150,6 +150,12 @@
         "enumTitles": ["Full time", "First half"]
       },
       "uniqueItems": true
+    },
+    "onlyWithStats": {
+      "title": "Only matches with statistics",
+      "type": "boolean",
+      "description": "Drop matches that have no statistics (e.g. early cup qualifying rounds). Disable to keep every match, including metadata-only rows.",
+      "default": true
     }
   }
 }
