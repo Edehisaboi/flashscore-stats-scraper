@@ -3,6 +3,69 @@
   "type": "object",
   "schemaVersion": 1,
   "properties": {
+    "mode": {
+      "title": "Mode",
+      "type": "string",
+      "description": "results scrapes finished matches with full statistics (uses Jobs / Competition + Year). fixtures scrapes upcoming matches (metadata only) for the Competitions list over the next Window days.",
+      "editor": "select",
+      "default": "results",
+      "enum": ["results", "fixtures"],
+      "enumTitles": ["Results (with stats)", "Upcoming fixtures"]
+    },
+    "competitions": {
+      "title": "Competitions (fixtures mode)",
+      "type": "array",
+      "description": "Competitions to scrape upcoming fixtures for. Use [\"all\"] for every supported competition. Only used when Mode is fixtures.",
+      "editor": "select",
+      "default": ["premier_league"],
+      "items": {
+        "type": "string",
+        "enum": [
+          "all",
+          "premier_league",
+          "fa_cup",
+          "efl_cup",
+          "community_shield",
+          "ligue_1",
+          "coupe_de_france",
+          "trophee_des_champions",
+          "bundesliga",
+          "dfb_pokal",
+          "franz_beckenbauer_supercup",
+          "serie_a",
+          "coppa_italia",
+          "supercoppa_italiana",
+          "la_liga",
+          "copa_del_rey",
+          "supercopa_de_espana",
+          "champions_league",
+          "europa_league",
+          "conference_league",
+          "uefa_super_cup",
+          "fifa_intercontinental_cup",
+          "fifa_club_world_cup",
+          "championship",
+          "eredivisie",
+          "liga_portugal",
+          "super_lig",
+          "jupiler_pro_league",
+          "scottish_premiership",
+          "bundesliga_2",
+          "serie_b",
+          "ligue_2",
+          "laliga2"
+        ]
+      },
+      "uniqueItems": true
+    },
+    "windowDays": {
+      "title": "Window (days, fixtures mode)",
+      "type": "integer",
+      "description": "How many days ahead to include upcoming fixtures. Only used when Mode is fixtures.",
+      "default": 7,
+      "minimum": 1,
+      "maximum": 30
+    },
     "jobs": {
       "title": "Jobs",
       "type": "array",
@@ -44,7 +107,17 @@
               "conference_league",
               "uefa_super_cup",
               "fifa_intercontinental_cup",
-              "fifa_club_world_cup"
+              "fifa_club_world_cup",
+              "championship",
+              "eredivisie",
+              "liga_portugal",
+              "super_lig",
+              "jupiler_pro_league",
+              "scottish_premiership",
+              "bundesliga_2",
+              "serie_b",
+              "ligue_2",
+              "laliga2"
             ]
           },
           "year": {
@@ -85,7 +158,17 @@
         "conference_league",
         "uefa_super_cup",
         "fifa_intercontinental_cup",
-        "fifa_club_world_cup"
+        "fifa_club_world_cup",
+        "championship",
+        "eredivisie",
+        "liga_portugal",
+        "super_lig",
+        "jupiler_pro_league",
+        "scottish_premiership",
+        "bundesliga_2",
+        "serie_b",
+        "ligue_2",
+        "laliga2"
       ],
       "enumTitles": [
         "Premier League",
@@ -109,7 +192,17 @@
         "UEFA Conference League",
         "UEFA Super Cup",
         "FIFA Intercontinental Cup",
-        "FIFA Club World Cup"
+        "FIFA Club World Cup",
+        "Championship",
+        "Eredivisie",
+        "Liga Portugal",
+        "Super Lig",
+        "Jupiler Pro League",
+        "Scottish Premiership",
+        "2. Bundesliga",
+        "Serie B",
+        "Ligue 2",
+        "LaLiga 2"
       ]
     },
     "year": {

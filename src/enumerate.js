@@ -52,6 +52,55 @@ export async function enumerateMatches(options) {
   return { matches, liveFsign: null };
 }
 
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+// Enumerate upcoming fixtures for a competition. The fixtures page embeds the
+// scheduled match records directly in its HTML (identical delimited format to
+// the results page), so a single page fetch covers the near-term horizon and no
+// stats/summary feeds are needed for unplayed matches. For a weekly window the
+// embedded records are more than enough; longer windows would need the paginated
+// fixtures feed.
+export async function enumerateFixtures(options) {
+  const {
+    fixturesUrl,
+    competition,
+    seasonYear,
+    windowDays = 7,
+    now = new Date(),
+    proxyConfiguration,
+    log,
+  } = options;
+
+  const html = await fetchResultsHtml(fixturesUrl, proxyConfiguration);
+  const records = parseMatchRecords(html);
+  const matches = selectUpcoming(records, {
+    competition,
+    seasonYear,
+    nowMs: now.getTime(),
+    windowDays,
+  });
+
+  logInfo(log, `Enumerated ${matches.length} upcoming ${competition.title} fixtures within ${windowDays}d`, {
+    fixturesUrl,
+  });
+
+  return { matches };
+}
+
+// Pure selection step (no I/O): keep only Scheduled matches with a kickoff in
+// the [now, now + windowDays] window, ordered by kickoff. Exported for testing.
+export function selectUpcoming(records, { competition, seasonYear, nowMs, windowDays }) {
+  const startMs = nowMs;
+  const endMs = nowMs + windowDays * DAY_MS;
+
+  return records
+    .filter((record) => record.statusCode === '1' && record.timestamp)
+    .map((record) => ({ record, ts: Number.parseInt(record.timestamp, 10) * 1000 }))
+    .filter(({ ts }) => Number.isFinite(ts) && ts >= startMs && ts <= endMs)
+    .sort((left, right) => left.ts - right.ts)
+    .map(({ record }) => normalizeRecord(record, competition, seasonYear));
+}
+
 async function fetchResultsHtml(resultsUrl, proxyConfiguration) {
   const proxyUrl = proxyConfiguration?.newUrl ? await proxyConfiguration.newUrl('results') : undefined;
   const response = await gotScraping({

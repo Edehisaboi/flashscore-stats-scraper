@@ -1,10 +1,16 @@
 import { Actor, log } from 'apify';
 import pLimit from 'p-limit';
-import { buildRow, createRowPlan } from './buildRow.js';
-import { getCompetition } from './competitions.js';
-import { enumerateMatches } from './enumerate.js';
+import { buildFixtureRow, buildRow, createRowPlan, FIXTURE_FIELDS } from './buildRow.js';
+import { buildFixturesUrl, getCompetition, getCurrentSeasonYear, getSeasonLabel } from './competitions.js';
+import { enumerateFixtures, enumerateMatches } from './enumerate.js';
 import { fetchStats, fetchSummary } from './feeds.js';
-import { DEFAULT_PROXY_CONFIGURATION, normalizeProxyConfiguration, resolveJobs } from './input.js';
+import {
+  DEFAULT_PROXY_CONFIGURATION,
+  normalizeProxyConfiguration,
+  resolveFixtureRun,
+  resolveJobs,
+  resolveMode,
+} from './input.js';
 import { parseStatsFeed } from './parseStats.js';
 import { parseSummaryFeed } from './parseSummary.js';
 import { resolveSeason } from './resolveSeason.js';
@@ -12,14 +18,17 @@ import { logInfo, logWarning } from './util.js';
 
 await Actor.main(async () => {
   const input = await Actor.getInput() || {};
-  const jobs = resolveJobs(input);
-  const includePeriods = input.includePeriods || ['ft', '1h'];
-  // Cup competitions include early qualifying rounds with no statistics; by
-  // default we drop stat-less matches so the output only contains useful rows.
-  const onlyWithStats = input.onlyWithStats !== false;
   const maxConcurrency = Number.isInteger(input.maxConcurrency) ? input.maxConcurrency : 10;
   const proxyInput = normalizeProxyConfiguration(input.proxyConfiguration || DEFAULT_PROXY_CONFIGURATION);
   const proxyConfiguration = await Actor.createProxyConfiguration(proxyInput);
+
+  // Fixtures mode scrapes upcoming matches (metadata only, no stats feeds), so it
+  // never needs the residential proxy escalation the stats feeds rely on.
+  if (resolveMode(input) === 'fixtures') {
+    await runFixtures({ input, proxyConfiguration, maxConcurrency });
+    return;
+  }
+
   const residentialProxyConfiguration = proxyInput.useApifyProxy === false
     ? undefined
     : await Actor.createProxyConfiguration({
@@ -27,6 +36,16 @@ await Actor.main(async () => {
       groups: ['RESIDENTIAL'],
       checkAccess: false,
     });
+
+  await runResults({ input, proxyConfiguration, residentialProxyConfiguration, maxConcurrency });
+});
+
+async function runResults({ input, proxyConfiguration, residentialProxyConfiguration, maxConcurrency }) {
+  const jobs = resolveJobs(input);
+  const includePeriods = input.includePeriods || ['ft', '1h'];
+  // Cup competitions include early qualifying rounds with no statistics; by
+  // default we drop stat-less matches so the output only contains useful rows.
+  const onlyWithStats = input.onlyWithStats !== false;
   const records = [];
   const summaries = [];
 
@@ -131,6 +150,7 @@ await Actor.main(async () => {
   }
 
   const output = {
+    mode: 'results',
     generatedAt: new Date().toISOString(),
     jobs: summaries,
     totalRows: rows.length,
@@ -140,7 +160,89 @@ await Actor.main(async () => {
   await Actor.setValue('OUTPUT', output);
   await Actor.setStatusMessage(`Finished: ${rows.length} rows`);
   logInfo(log, 'Run summary', output);
-});
+}
+
+async function runFixtures({ input, proxyConfiguration, maxConcurrency }) {
+  const { competitions, windowDays } = resolveFixtureRun(input);
+  const now = new Date();
+  const limit = pLimit(maxConcurrency);
+
+  await Actor.setStatusMessage(
+    `Fetching upcoming fixtures for ${competitions.length} competition(s) over ${windowDays}d`,
+  );
+
+  const results = await Promise.all(competitions.map((key) => limit(async () => {
+    const competition = getCompetition(key);
+    const fixturesUrl = buildFixturesUrl(competition);
+    const seasonYear = getCurrentSeasonYear(competition, now);
+    const season = getSeasonLabel(competition, seasonYear);
+    const startedAt = new Date().toISOString();
+
+    try {
+      const { matches } = await enumerateFixtures({
+        fixturesUrl,
+        competition,
+        seasonYear,
+        windowDays,
+        now,
+        proxyConfiguration,
+        log,
+      });
+
+      const rows = matches.map((match) => buildFixtureRow({ competition, season, match }));
+
+      return {
+        rows,
+        summary: {
+          competition: competition.key,
+          title: competition.title,
+          season,
+          fixturesUrl,
+          startedAt,
+          finishedAt: new Date().toISOString(),
+          fixturesFound: rows.length,
+          error: null,
+        },
+      };
+    } catch (error) {
+      logWarning(log, `Fixtures fetch failed for ${competition.title}`, { message: error.message });
+
+      return {
+        rows: [],
+        summary: {
+          competition: competition.key,
+          title: competition.title,
+          season,
+          fixturesUrl,
+          startedAt,
+          finishedAt: new Date().toISOString(),
+          fixturesFound: 0,
+          error: error.message,
+        },
+      };
+    }
+  })));
+
+  const rows = results.flatMap((result) => result.rows);
+  const summaries = results.map((result) => result.summary);
+
+  if (rows.length) {
+    await Actor.pushData(rows);
+  }
+
+  const output = {
+    mode: 'fixtures',
+    generatedAt: new Date().toISOString(),
+    windowDays,
+    jobs: summaries,
+    totalRows: rows.length,
+    columns: FIXTURE_FIELDS,
+  };
+
+  await Actor.setValue('OUTPUT', output);
+  await Actor.setStatusMessage(`Finished: ${rows.length} upcoming fixtures`);
+  logInfo(log, 'Fixtures run summary', output);
+}
 
 // Merge halftime score and regulation full-time score from the match summary
 // feed. Summary FT (1st half + 2nd half) is authoritative regulation and

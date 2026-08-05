@@ -28,6 +28,24 @@ export const METADATA_FIELDS = Object.freeze([
   'away_score_ht',
 ]);
 
+// Upcoming fixtures have no statistics, so their rows carry metadata only
+// (a subset of METADATA_FIELDS, minus the score columns).
+export const FIXTURE_FIELDS = Object.freeze([
+  'competition',
+  'country',
+  'season',
+  'match_id',
+  'match_url',
+  'status',
+  'date_utc',
+  'kickoff',
+  'round',
+  'home_team',
+  'home_team_id',
+  'away_team',
+  'away_team_id',
+]);
+
 export const PERIOD_CONFIG = Object.freeze({
   ft: {
     key: 'ft',
@@ -121,6 +139,18 @@ export function buildRow(record, rowPlan) {
         row[`away_${valueField}_${period.outputSuffix}`] = awayExpanded[valueField] ?? '';
       }
     }
+  }
+
+  return row;
+}
+
+// Build a metadata-only row for an upcoming fixture. Reuses the same metadata
+// resolution as buildRow so field values stay consistent between modes.
+export function buildFixtureRow(record) {
+  const row = {};
+
+  for (const field of FIXTURE_FIELDS) {
+    row[field] = getMetadataValue(record, field);
   }
 
   return row;

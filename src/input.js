@@ -28,6 +28,38 @@ export function resolveJobs(input = {}) {
   });
 }
 
+export function resolveMode(input = {}) {
+  return input.mode === 'fixtures' ? 'fixtures' : 'results';
+}
+
+// Fixtures runs scrape upcoming matches for a set of competitions over a rolling
+// window, so they take a competition list + windowDays instead of per-year jobs.
+export function resolveFixtureRun(input = {}) {
+  const windowDays = Number.isInteger(input.windowDays) ? input.windowDays : 7;
+
+  if (windowDays < 1 || windowDays > 30) {
+    throw new Error(`windowDays must be between 1 and 30, got "${input.windowDays}"`);
+  }
+
+  const requested = input.competitions;
+  const wantsAll = requested === 'all' ||
+    (Array.isArray(requested) && requested.map(String).includes('all'));
+
+  let keys;
+  if (wantsAll) {
+    keys = COMPETITIONS.map((competition) => competition.key);
+  } else if (Array.isArray(requested) && requested.length) {
+    keys = requested.map((key) => String(key).trim()).filter(Boolean);
+  } else {
+    keys = [COMPETITIONS[0].key];
+  }
+
+  const unique = [...new Set(keys)];
+  unique.forEach((key) => getCompetition(key));
+
+  return { competitions: unique, windowDays };
+}
+
 export function normalizeProxyConfiguration(proxyConfiguration) {
   if (!proxyConfiguration || typeof proxyConfiguration !== 'object') {
     return DEFAULT_PROXY_CONFIGURATION;

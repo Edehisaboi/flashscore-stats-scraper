@@ -155,6 +155,79 @@ export const COMPETITIONS = Object.freeze([
     slug: 'fifa-club-world-cup',
     seasonType: 'calendar',
   },
+  // Tier 1 expansion: additional top flights and the big-five second divisions.
+  // Slugs verified against live Flashscore URLs (canonical forms noted where the
+  // older/alternate slug now redirects, e.g. primeira-liga -> liga-portugal).
+  {
+    key: 'championship',
+    title: 'Championship',
+    country: 'england',
+    slug: 'championship',
+    seasonType: 'season',
+  },
+  {
+    key: 'eredivisie',
+    title: 'Eredivisie',
+    country: 'netherlands',
+    slug: 'eredivisie',
+    seasonType: 'season',
+  },
+  {
+    key: 'liga_portugal',
+    title: 'Liga Portugal',
+    country: 'portugal',
+    slug: 'liga-portugal',
+    seasonType: 'season',
+  },
+  {
+    key: 'super_lig',
+    title: 'Super Lig',
+    country: 'turkey',
+    slug: 'super-lig',
+    seasonType: 'season',
+  },
+  {
+    key: 'jupiler_pro_league',
+    title: 'Jupiler Pro League',
+    country: 'belgium',
+    slug: 'jupiler-pro-league',
+    seasonType: 'season',
+  },
+  {
+    key: 'scottish_premiership',
+    title: 'Scottish Premiership',
+    country: 'scotland',
+    slug: 'premiership',
+    seasonType: 'season',
+  },
+  {
+    key: 'bundesliga_2',
+    title: '2. Bundesliga',
+    country: 'germany',
+    slug: '2-bundesliga',
+    seasonType: 'season',
+  },
+  {
+    key: 'serie_b',
+    title: 'Serie B',
+    country: 'italy',
+    slug: 'serie-b',
+    seasonType: 'season',
+  },
+  {
+    key: 'ligue_2',
+    title: 'Ligue 2',
+    country: 'france',
+    slug: 'ligue-2',
+    seasonType: 'season',
+  },
+  {
+    key: 'laliga2',
+    title: 'LaLiga 2',
+    country: 'spain',
+    slug: 'laliga2',
+    seasonType: 'season',
+  },
 ]);
 
 export const COMPETITION_BY_KEY = Object.freeze(
@@ -186,4 +259,24 @@ export function buildArchiveUrl(competition) {
 
 export function buildCompetitionBaseUrl(competition) {
   return `${FLASH_SCORE_BASE_URL}/football/${competition.country}/${competition.slug}/`;
+}
+
+// Upcoming fixtures live on the current season's fixtures page, reachable
+// directly from the competition base URL without resolving a specific season.
+export function buildFixturesUrl(competition) {
+  return `${buildCompetitionBaseUrl(competition)}fixtures/`;
+}
+
+// Best-effort current season start year for fixtures runs (no archive lookup).
+// Calendar competitions use the running year; season competitions roll over in
+// the summer, and next-season fixtures are published from July, so treat July
+// onward as the new season's start year.
+export function getCurrentSeasonYear(competition, now = new Date()) {
+  const year = now.getUTCFullYear();
+
+  if (competition.seasonType === 'calendar') {
+    return year;
+  }
+
+  return now.getUTCMonth() >= 6 ? year : year - 1;
 }
