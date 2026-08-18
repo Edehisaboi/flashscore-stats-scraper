@@ -12,10 +12,21 @@ Extra time and penalty shootouts are excluded from full-time stats. If a match w
 
 ## Input
 
-Use `jobs` for multiple runs in one Dataset:
+There are three modes. Each reads its own inputs and ignores the rest.
+
+| Mode | Reads | Purpose |
+| --- | --- | --- |
+| `season_stats` (default) | `jobs`, or `competition` + `year` | A whole season of finished matches with statistics |
+| `fixtures` | `competitions`, `windowDays` | Upcoming matches, metadata only |
+| `fetch_stats` | `matchIds` | Statistics for named matches, by Flashscore match id |
+
+### Season backfill (`season_stats`)
+
+Use `jobs` for multiple seasons in one Dataset:
 
 ```json
 {
+  "mode": "season_stats",
   "jobs": [
     { "competition": "premier_league", "year": 2024 },
     { "competition": "fa_cup", "year": 2024 }
@@ -26,9 +37,9 @@ Use `jobs` for multiple runs in one Dataset:
 
 For season competitions, `year` is the start year. For example, `2024` resolves to `2024/2025`. Calendar competitions use the edition year.
 
-### Upcoming fixtures mode
+### Upcoming fixtures (`fixtures`)
 
-Set `mode: "fixtures"` to scrape upcoming matches (metadata only — no statistics, since the matches are unplayed) for a set of competitions over a rolling window:
+Scrapes upcoming matches (metadata only — no statistics, since the matches are unplayed) for a set of competitions over a rolling window:
 
 ```json
 {
@@ -39,6 +50,21 @@ Set `mode: "fixtures"` to scrape upcoming matches (metadata only — no statisti
 ```
 
 Use `"competitions": ["all"]` for every supported competition. Each row carries `competition, country, season, match_id, match_url, status, date_utc, kickoff, round, home_team, home_team_id, away_team, away_team_id`. The stable Flashscore team IDs make it easy to line fixtures up with odds and downstream models.
+
+### Match statistics by id (`fetch_stats`)
+
+Fetches statistics for matches you already hold ids for — the `match_id` values from an earlier `fixtures` run:
+
+```json
+{
+  "mode": "fetch_stats",
+  "matchIds": ["Ug3NfA9d", "8lQx2Kzr"]
+}
+```
+
+The stats and summary feeds are addressable by match id on their own, so this mode skips season resolution and match enumeration entirely. That makes it the cheap, incremental way to grade a set of matches that has just finished, rather than re-walking a whole season.
+
+Because there is no competition listing, there is no listing status either. Status is derived from the summary feed: `"finished"` when a regulation full-time score is present, and `""` otherwise. An empty status means "no result available yet" and does not distinguish a postponed match from one that has not kicked off — treat it as "retry later", not as a terminal state.
 
 ### Supported competitions
 

@@ -32,6 +32,10 @@ export const METADATA_FIELDS = Object.freeze([
 // (a subset of METADATA_FIELDS, minus the score columns).
 export const FIXTURE_FIELDS = Object.freeze([
   'competition',
+  // The stable catalog key, alongside the human-readable title. A single run
+  // covers many competitions, so consumers need to tell the rows apart by
+  // something that does not change when a title is reworded.
+  'competition_key',
   'country',
   'season',
   'match_id',
@@ -276,6 +280,8 @@ function getMetadataValue(record, field) {
   switch (field) {
     case 'competition':
       return competition.title || match.competition || '';
+    case 'competition_key':
+      return competition.key || match.competitionKey || '';
     case 'country':
       return competition.country || match.country || '';
     case 'season':

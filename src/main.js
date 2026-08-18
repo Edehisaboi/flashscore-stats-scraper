@@ -9,22 +9,24 @@ import {
   normalizeProxyConfiguration,
   resolveFixtureRun,
   resolveJobs,
+  resolveMatchIds,
   resolveMode,
 } from './input.js';
 import { parseStatsFeed } from './parseStats.js';
-import { parseSummaryFeed } from './parseSummary.js';
+import { deriveMatchStatus, mergeSummary } from './parseSummary.js';
 import { resolveSeason } from './resolveSeason.js';
 import { logInfo, logWarning } from './util.js';
 
 await Actor.main(async () => {
   const input = await Actor.getInput() || {};
+  const mode = resolveMode(input);
   const maxConcurrency = Number.isInteger(input.maxConcurrency) ? input.maxConcurrency : 10;
   const proxyInput = normalizeProxyConfiguration(input.proxyConfiguration || DEFAULT_PROXY_CONFIGURATION);
   const proxyConfiguration = await Actor.createProxyConfiguration(proxyInput);
 
   // Fixtures mode scrapes upcoming matches (metadata only, no stats feeds), so it
   // never needs the residential proxy escalation the stats feeds rely on.
-  if (resolveMode(input) === 'fixtures') {
+  if (mode === 'fixtures') {
     await runFixtures({ input, proxyConfiguration, maxConcurrency });
     return;
   }
@@ -37,10 +39,20 @@ await Actor.main(async () => {
       checkAccess: false,
     });
 
-  await runResults({ input, proxyConfiguration, residentialProxyConfiguration, maxConcurrency });
+  const options = { input, proxyConfiguration, residentialProxyConfiguration, maxConcurrency };
+
+  if (mode === 'fetch_stats') {
+    await runFetchStats(options);
+    return;
+  }
+
+  await runSeasonStats(options);
 });
 
-async function runResults({ input, proxyConfiguration, residentialProxyConfiguration, maxConcurrency }) {
+// Season backfill: given a competition and a year, discover every finished match
+// in that season and scrape its statistics. Use fetch_stats instead when the
+// match ids are already known.
+async function runSeasonStats({ input, proxyConfiguration, residentialProxyConfiguration, maxConcurrency }) {
   const jobs = resolveJobs(input);
   const includePeriods = input.includePeriods || ['ft', '1h'];
   // Cup competitions include early qualifying rounds with no statistics; by
@@ -150,7 +162,7 @@ async function runResults({ input, proxyConfiguration, residentialProxyConfigura
   }
 
   const output = {
-    mode: 'results',
+    mode: 'season_stats',
     generatedAt: new Date().toISOString(),
     jobs: summaries,
     totalRows: rows.length,
@@ -161,6 +173,97 @@ async function runResults({ input, proxyConfiguration, residentialProxyConfigura
   await Actor.setStatusMessage(`Finished: ${rows.length} rows`);
   logInfo(log, 'Run summary', output);
 }
+
+/**
+ * Scrape statistics for a known set of matches.
+ *
+ * The stats and summary feeds are addressable by match id on their own, so this
+ * mode skips season resolution and match enumeration entirely — the two steps
+ * that make season_stats expensive and season-scoped. That is what makes an
+ * incremental "grade the matches that finished since last night" run possible.
+ *
+ * Because there is no listing page, there is no listing status either: status is
+ * derived from the summary feed instead. A match with a regulation full-time
+ * score has finished; anything else is reported as unknown rather than guessed
+ * at, so a caller never promotes a match that has not actually been played.
+ */
+async function runFetchStats({ input, proxyConfiguration, residentialProxyConfiguration, maxConcurrency }) {
+  const matchIds = resolveMatchIds(input);
+  const includePeriods = input.includePeriods || ['ft', '1h'];
+  // Unlike season_stats, this mode keeps stat-less matches by default. A caller
+  // that named a specific match wants its result even when the detailed stats
+  // feed is empty — the final score alone is enough to settle a bet.
+  const onlyWithStats = input.onlyWithStats === true;
+  const startedAt = new Date().toISOString();
+  const limit = pLimit(maxConcurrency);
+
+  let withStats = 0;
+  let failed = 0;
+  const failures = [];
+
+  await Actor.setStatusMessage(`Fetching stats for ${matchIds.length} match(es)`);
+
+  const records = await Promise.all(matchIds.map((mid) => limit(async () => {
+    const feedOptions = { proxyConfiguration, residentialProxyConfiguration, log };
+    const match = { mid, status: '' };
+
+    try {
+      const response = await fetchStats(mid, feedOptions);
+      const statsByPeriod = response.noStats ? {} : parseStatsFeed(response.body);
+      const hasStats = Object.keys(statsByPeriod).length > 0;
+
+      if (hasStats) {
+        withStats += 1;
+      }
+
+      // Always fetched, even with no detailed stats: the summary is what carries
+      // the score, and the score is what decides whether the match is finished.
+      mergeSummary(match, await fetchSummary(mid, feedOptions).catch(() => null));
+      match.status = deriveMatchStatus(match);
+
+      return {
+        match,
+        statsByPeriod,
+        hasStats,
+        feed: { host: response.host, proxyTier: response.proxyTier, noStats: response.noStats },
+      };
+    } catch (error) {
+      failed += 1;
+      failures.push({ mid, message: error.message });
+      logWarning(log, `Stats fetch failed for ${mid}`, { message: error.message });
+
+      return { match, statsByPeriod: {}, hasStats: false, feed: { noStats: true, error: error.message } };
+    }
+  })));
+
+  const outputRecords = onlyWithStats ? records.filter((record) => record.hasStats) : records;
+  const rowPlan = createRowPlan(outputRecords, includePeriods);
+  const rows = outputRecords.map((record) => buildRow(record, rowPlan));
+
+  if (rows.length) {
+    await Actor.pushData(rows);
+  }
+
+  const output = {
+    mode: 'fetch_stats',
+    generatedAt: new Date().toISOString(),
+    startedAt,
+    finishedAt: new Date().toISOString(),
+    matchesRequested: matchIds.length,
+    matchesWithStats: withStats,
+    matchesWithoutStats: matchIds.length - withStats - failed,
+    statsFailed: failed,
+    onlyWithStats,
+    failures,
+    totalRows: rows.length,
+    columns: rowPlan.outputFields,
+  };
+
+  await Actor.setValue('OUTPUT', output);
+  await Actor.setStatusMessage(`Finished: ${rows.length} rows from ${matchIds.length} match(es)`);
+  logInfo(log, 'Fetch stats run summary', output);
+}
+
 
 async function runFixtures({ input, proxyConfiguration, maxConcurrency }) {
   const { competitions, windowDays } = resolveFixtureRun(input);
@@ -244,18 +347,3 @@ async function runFixtures({ input, proxyConfiguration, maxConcurrency }) {
   logInfo(log, 'Fixtures run summary', output);
 }
 
-// Merge halftime score and regulation full-time score from the match summary
-// feed. Summary FT (1st half + 2nd half) is authoritative regulation and
-// overrides the listing score, which can show the after-extra-time result.
-function mergeSummary(match, summaryResponse) {
-  if (!summaryResponse || summaryResponse.noStats) {
-    return;
-  }
-
-  const summary = parseSummaryFeed(summaryResponse.body);
-
-  if (summary.homeScoreHt !== '') match.homeScoreHt = summary.homeScoreHt;
-  if (summary.awayScoreHt !== '') match.awayScoreHt = summary.awayScoreHt;
-  if (summary.homeScoreFt !== '') match.homeScoreFt = summary.homeScoreFt;
-  if (summary.awayScoreFt !== '') match.awayScoreFt = summary.awayScoreFt;
-}

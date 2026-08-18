@@ -99,6 +99,7 @@ test('buildFixtureRow emits a metadata-only row without score columns', () => {
   assert.equal(row.competition, 'Championship');
   assert.equal(row.country, 'england');
   assert.equal(row.season, '2026-2027');
+  assert.equal(row.competition_key, 'championship');
   assert.equal(row.match_id, 'abc123');
   assert.equal(row.status, 'Scheduled');
   assert.equal(row.date_utc, '2026-08-21T19:00:00.000Z');
@@ -108,10 +109,16 @@ test('buildFixtureRow emits a metadata-only row without score columns', () => {
   assert.ok(!('home_score_ft' in row));
 });
 
-test('resolveMode defaults to results and reads fixtures explicitly', () => {
-  assert.equal(resolveMode({}), 'results');
+test('resolveMode defaults to season_stats and rejects unknown modes', () => {
+  assert.equal(resolveMode({}), 'season_stats');
   assert.equal(resolveMode({ mode: 'fixtures' }), 'fixtures');
-  assert.equal(resolveMode({ mode: 'anything-else' }), 'results');
+  assert.equal(resolveMode({ mode: 'fetch_stats' }), 'fetch_stats');
+  assert.equal(resolveMode({ mode: 'season_stats' }), 'season_stats');
+
+  // The old name is gone rather than aliased, so a stale caller fails loudly
+  // instead of silently running a season-wide backfill.
+  assert.throws(() => resolveMode({ mode: 'results' }), /Unknown mode/);
+  assert.throws(() => resolveMode({ mode: 'anything-else' }), /Unknown mode/);
 });
 
 test('resolveFixtureRun expands "all", dedupes lists, and validates input', () => {

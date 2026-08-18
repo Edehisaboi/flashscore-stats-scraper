@@ -28,8 +28,39 @@ export function resolveJobs(input = {}) {
   });
 }
 
+export const MODES = Object.freeze(['fixtures', 'season_stats', 'fetch_stats']);
+
+const DEFAULT_MODE = 'season_stats';
+
 export function resolveMode(input = {}) {
-  return input.mode === 'fixtures' ? 'fixtures' : 'results';
+  const mode = String(input.mode ?? '').trim();
+
+  if (!mode) {
+    return DEFAULT_MODE;
+  }
+
+  if (!MODES.includes(mode)) {
+    throw new Error(`Unknown mode "${mode}". Expected one of: ${MODES.join(', ')}`);
+  }
+
+  return mode;
+}
+
+// fetch_stats scrapes named matches rather than discovering them, so the only
+// input it needs is the list of Flashscore match ids. Callers that already hold
+// those ids (ParlayHux stores one per fixture) skip season resolution and match
+// enumeration entirely.
+export function resolveMatchIds(input = {}) {
+  const requested = Array.isArray(input.matchIds) ? input.matchIds : [];
+  const ids = [...new Set(
+    requested.map((id) => String(id ?? '').trim()).filter(Boolean),
+  )];
+
+  if (!ids.length) {
+    throw new Error('fetch_stats mode requires a non-empty matchIds list');
+  }
+
+  return ids;
 }
 
 // Fixtures runs scrape upcoming matches for a set of competitions over a rolling
