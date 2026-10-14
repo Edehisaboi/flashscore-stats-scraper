@@ -13,7 +13,7 @@ Everything is plain HTTP — there is no browser:
 | Mode | Input it reads | What it does |
 | --- | --- | --- |
 | `season_stats` (default) | `jobs`, or `competition` + `year` | A whole season of finished matches with statistics. Use for backfill. |
-| `fixtures` | `competitions`, `windowDays` | Upcoming matches, metadata only. |
+| `fixtures` | `competitions`, `endDate` | Upcoming matches, metadata only. |
 | `fetch_stats` | `matchIds` | Statistics for specific matches by Flashscore match id. Skips season resolution and enumeration, so it is the cheap incremental option once you already hold the ids. |
 
 `fetch_stats` has no competition listing to read a status from, so it reports `status: "finished"` only when the summary feed yields a regulation full-time score, and an empty status otherwise. An empty status means "no result available yet" — it does not distinguish a postponed match from one that has not kicked off.

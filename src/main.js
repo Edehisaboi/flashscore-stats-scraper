@@ -266,12 +266,12 @@ async function runFetchStats({ input, proxyConfiguration, residentialProxyConfig
 
 
 async function runFixtures({ input, proxyConfiguration, maxConcurrency }) {
-  const { competitions, windowDays } = resolveFixtureRun(input);
   const now = new Date();
+  const { competitions, endDate, endMs } = resolveFixtureRun(input, now);
   const limit = pLimit(maxConcurrency);
 
   await Actor.setStatusMessage(
-    `Fetching upcoming fixtures for ${competitions.length} competition(s) over ${windowDays}d`,
+    `Fetching upcoming fixtures for ${competitions.length} competition(s) up to ${endDate}`,
   );
 
   const results = await Promise.all(competitions.map((key) => limit(async () => {
@@ -286,7 +286,7 @@ async function runFixtures({ input, proxyConfiguration, maxConcurrency }) {
         fixturesUrl,
         competition,
         seasonYear,
-        windowDays,
+        endMs,
         now,
         proxyConfiguration,
         log,
@@ -336,7 +336,7 @@ async function runFixtures({ input, proxyConfiguration, maxConcurrency }) {
   const output = {
     mode: 'fixtures',
     generatedAt: new Date().toISOString(),
-    windowDays,
+    endDate,
     jobs: summaries,
     totalRows: rows.length,
     columns: FIXTURE_FIELDS,

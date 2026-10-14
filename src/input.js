@@ -63,14 +63,31 @@ export function resolveMatchIds(input = {}) {
   return ids;
 }
 
-// Fixtures runs scrape upcoming matches for a set of competitions over a rolling
-// window, so they take a competition list + windowDays instead of per-year jobs.
-export function resolveFixtureRun(input = {}) {
-  const windowDays = Number.isInteger(input.windowDays) ? input.windowDays : 7;
+const DAY_MS = 24 * 60 * 60 * 1000;
+const DEFAULT_FIXTURE_DAYS = 7;
+const MAX_FIXTURE_DAYS = 30;
 
-  if (windowDays < 1 || windowDays > 30) {
-    throw new Error(`windowDays must be between 1 and 30, got "${input.windowDays}"`);
+function isDay(value) {
+  const ms = Date.parse(`${value}T00:00:00Z`);
+  return !Number.isNaN(ms) && new Date(ms).toISOString().slice(0, 10) === value;
+}
+
+// Fixtures runs scrape upcoming matches for a set of competitions from now up to
+// an end date, so they take a competition list + endDate instead of per-year
+// jobs. The end date is a UTC calendar day and is inclusive: left empty it is a
+// week from today, a date that does not exist falls back to today, and nothing
+// past 30 days ahead is chased.
+export function resolveFixtureRun(input = {}, now = new Date()) {
+  const day = (offset) => new Date(now.getTime() + offset * DAY_MS).toISOString().slice(0, 10);
+  const given = String(input.endDate ?? '').trim() || day(DEFAULT_FIXTURE_DAYS);
+  const asked = isDay(given) ? given : day(0);
+
+  if (asked < day(0)) {
+    throw new Error(`endDate must not be before today, got "${asked}"`);
   }
+
+  const endDate = asked > day(MAX_FIXTURE_DAYS) ? day(MAX_FIXTURE_DAYS) : asked;
+  const endMs = Date.parse(`${endDate}T23:59:59.999Z`);
 
   const requested = input.competitions;
   const wantsAll = requested === 'all' ||
@@ -88,7 +105,7 @@ export function resolveFixtureRun(input = {}) {
   const unique = [...new Set(keys)];
   unique.forEach((key) => getCompetition(key));
 
-  return { competitions: unique, windowDays };
+  return { competitions: unique, endDate, endMs };
 }
 
 export function normalizeProxyConfiguration(proxyConfiguration) {

@@ -107,13 +107,12 @@
       "sectionCaption": "Upcoming fixtures",
       "sectionDescription": "Used by the fixtures mode only."
     },
-    "windowDays": {
-      "title": "Window (days)",
-      "type": "integer",
-      "description": "How many days ahead to include upcoming fixtures.",
-      "default": 7,
-      "minimum": 1,
-      "maximum": 30
+    "endDate": {
+      "title": "End date",
+      "type": "string",
+      "description": "Last day (UTC, inclusive) to include upcoming fixtures for, from now: at most 30 days ahead. Leave empty for one week from today; a date that does not exist means today.",
+      "editor": "datepicker",
+      "dateType": "absolute"
     },
     "matchIds": {
       "title": "Match IDs",

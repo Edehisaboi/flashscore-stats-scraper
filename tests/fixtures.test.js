@@ -60,8 +60,10 @@ test('selectUpcoming keeps scheduled matches inside the window, ordered by kicko
   const records = [
     rec('later', '1', Date.UTC(2026, 7, 3)), // scheduled, in window
     rec('sooner', '1', Date.UTC(2026, 7, 2)), // scheduled, in window (earlier)
+    rec('sooner', '1', Date.UTC(2026, 7, 2)), // the page repeats each record
     rec('finished', '3', Date.UTC(2026, 7, 3)), // finished -> excluded
-    rec('faraway', '1', Date.UTC(2026, 7, 20)), // scheduled but outside 7d window
+    rec('lastday', '1', Date.UTC(2026, 7, 8, 21)), // scheduled late on the end date
+    rec('faraway', '1', Date.UTC(2026, 7, 20)), // scheduled but after the end date
     rec('notime', '1', null), // scheduled but no kickoff -> excluded
   ];
 
@@ -69,11 +71,11 @@ test('selectUpcoming keeps scheduled matches inside the window, ordered by kicko
     competition,
     seasonYear: 2026,
     nowMs,
-    windowDays: 7,
+    endMs: Date.parse('2026-08-08T23:59:59.999Z'),
   });
 
-  assert.equal(matches.length, 2);
-  assert.deepEqual(matches.map((match) => match.mid), ['sooner', 'later']);
+  assert.equal(matches.length, 3);
+  assert.deepEqual(matches.map((match) => match.mid), ['sooner', 'later', 'lastday']);
   assert.equal(matches[0].status, 'Scheduled');
   assert.equal(matches[0].dateUtc, new Date(Date.UTC(2026, 7, 2)).toISOString());
 });
@@ -122,18 +124,28 @@ test('resolveMode defaults to season_stats and rejects unknown modes', () => {
 });
 
 test('resolveFixtureRun expands "all", dedupes lists, and validates input', () => {
-  const all = resolveFixtureRun({ competitions: 'all' });
+  const now = new Date('2026-08-01T10:00:00Z');
+  const all = resolveFixtureRun({ competitions: 'all' }, now);
   assert.ok(all.competitions.includes('premier_league'));
   assert.ok(all.competitions.includes('laliga2'));
-  assert.equal(all.windowDays, 7);
+  assert.equal(all.endDate, '2026-08-08');
+  assert.equal(all.endMs, Date.parse('2026-08-08T23:59:59.999Z'));
 
-  const picked = resolveFixtureRun({ competitions: ['la_liga', 'serie_b', 'la_liga'], windowDays: 3 });
+  const picked = resolveFixtureRun(
+    { competitions: ['la_liga', 'serie_b', 'la_liga'], endDate: '2026-08-20' },
+    now,
+  );
   assert.deepEqual(picked.competitions, ['la_liga', 'serie_b']);
-  assert.equal(picked.windowDays, 3);
+  assert.equal(picked.endDate, '2026-08-20');
+  assert.equal(resolveFixtureRun({ endDate: '2026-08-01' }, now).endDate, '2026-08-01');
 
-  assert.deepEqual(resolveFixtureRun({}).competitions, ['premier_league']);
+  assert.deepEqual(resolveFixtureRun({}, now).competitions, ['premier_league']);
 
-  assert.throws(() => resolveFixtureRun({ competitions: ['not_a_league'] }), /Unknown competition/);
-  assert.throws(() => resolveFixtureRun({ windowDays: 0 }), /windowDays must be between/);
-  assert.throws(() => resolveFixtureRun({ windowDays: 45 }), /windowDays must be between/);
+  assert.equal(resolveFixtureRun({ endDate: '2026-09-30' }, now).endDate, '2026-08-31');
+  assert.equal(resolveFixtureRun({ endDate: '2026-08-31' }, now).endDate, '2026-08-31');
+  assert.equal(resolveFixtureRun({ endDate: '2026-08-32' }, now).endDate, '2026-08-01');
+  assert.equal(resolveFixtureRun({ endDate: 'next week' }, now).endDate, '2026-08-01');
+
+  assert.throws(() => resolveFixtureRun({ competitions: ['not_a_league'] }, now), /Unknown competition/);
+  assert.throws(() => resolveFixtureRun({ endDate: '2026-07-31' }, now), /not be before today/);
 });

@@ -17,7 +17,7 @@ There are three modes. Each reads its own inputs and ignores the rest.
 | Mode | Reads | Purpose |
 | --- | --- | --- |
 | `season_stats` (default) | `jobs`, or `competition` + `year` | A whole season of finished matches with statistics |
-| `fixtures` | `competitions`, `windowDays` | Upcoming matches, metadata only |
+| `fixtures` | `competitions`, `endDate` | Upcoming matches, metadata only |
 | `fetch_stats` | `matchIds` | Statistics for named matches, by Flashscore match id |
 
 ### Season backfill (`season_stats`)
@@ -39,13 +39,13 @@ For season competitions, `year` is the start year. For example, `2024` resolves 
 
 ### Upcoming fixtures (`fixtures`)
 
-Scrapes upcoming matches (metadata only — no statistics, since the matches are unplayed) for a set of competitions over a rolling window:
+Scrapes upcoming matches (metadata only — no statistics, since the matches are unplayed) for a set of competitions, from now up to an end date (UTC, inclusive; a week from today when left empty, today when the date does not exist, and never more than 30 days ahead):
 
 ```json
 {
   "mode": "fixtures",
   "competitions": ["premier_league", "la_liga", "championship"],
-  "windowDays": 7
+  "endDate": "2026-10-21"
 }
 ```
 
