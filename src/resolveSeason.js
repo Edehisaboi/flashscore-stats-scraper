@@ -110,7 +110,20 @@ async function fetchArchiveHtml(archiveUrl, proxyConfiguration) {
   return body;
 }
 
+// The archive page also links other competitions' current seasons (its menu has
+// "Champions League 2026/27"), and a current season's URL carries no year to
+// score on, so only this competition's own season pages are candidates.
+function belongsToCompetition(candidate, competition) {
+  const base = `/football/${competition.country}/${competition.slug}`;
+  const { pathname } = new URL(candidate.seasonUrl);
+  return pathname.startsWith(base) && /^(-\d{4}(-\d{4})?)?\/$/.test(pathname.slice(base.length));
+}
+
 function isSeasonCandidate(candidate, competition, year) {
+  if (!belongsToCompetition(candidate, competition)) {
+    return false;
+  }
+
   const normalizedText = normalizeSeasonText(candidate.label);
   const normalizedHref = normalizeSeasonText(candidate.seasonUrl);
   const patterns = getSeasonPatterns(competition, year).map(normalizeSeasonText);

@@ -16,6 +16,25 @@ test('findSeasonLink resolves a season archive entry by start year', () => {
   assert.equal(match.seasonUrl, 'https://www.flashscore.com/football/england/premier-league-2024-2025/');
 });
 
+test('findSeasonLink ignores other competitions linked from the archive page', () => {
+  const competition = COMPETITION_BY_KEY.premier_league;
+  const html = `
+    <a href="/football/europe/champions-league/">Champions League 2026/27</a>
+    "name":"Premier League 2026/2027","url":"\/football\/england\/premier-league\/"
+    "name":"Premier League 2025/2026","url":"\/football\/england\/premier-league-2025-2026\/"
+  `;
+  const archive = 'https://www.flashscore.com/football/england/premier-league/archive/';
+
+  assert.equal(
+    findSeasonLink(html, archive, competition, 2026).seasonUrl,
+    'https://www.flashscore.com/football/england/premier-league/',
+  );
+  assert.equal(
+    findSeasonLink(html, archive, competition, 2025).seasonUrl,
+    'https://www.flashscore.com/football/england/premier-league-2025-2026/',
+  );
+});
+
 test('findSeasonLink resolves a calendar-year competition entry', () => {
   const competition = COMPETITION_BY_KEY.uefa_super_cup;
   const html = `

@@ -41,6 +41,7 @@ async function fetchFeed(feedName, mid, options = {}) {
 
   let lastError = null;
   let lastEmptyResponse = null;
+  let emptyAnswers = 0;
 
   for (const token of tokens) {
     for (const proxyTier of proxyTiers) {
@@ -86,6 +87,14 @@ async function fetchFeed(feedName, mid, options = {}) {
               proxyTier: proxyTier.name,
               noStats: true,
             };
+            // A match with no statistics answers empty from every host, on the
+            // first try; a match with them answers in full. Two hosts agreeing
+            // is the answer, not a block worth escalating to residential proxies.
+            emptyAnswers += 1;
+            if (emptyAnswers >= 2) {
+              logWarning(log, `Stats feed was empty for ${mid}; it has no statistics`);
+              return lastEmptyResponse;
+            }
           }
 
           if (!isBlockedResponse(response) && response.statusCode >= 400 && response.statusCode < 500) {
@@ -101,7 +110,7 @@ async function fetchFeed(feedName, mid, options = {}) {
   }
 
   if (lastEmptyResponse) {
-    logWarning(log, `Stats feed was empty for ${mid}; emitting metadata-only row`);
+    logWarning(log, `Stats feed was empty for ${mid}; it has no statistics`);
     return lastEmptyResponse;
   }
 
